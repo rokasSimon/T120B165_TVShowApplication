@@ -6,11 +6,13 @@ namespace TVShowApplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class UsersController : ControllerBase
     {
+        
+
         [HttpPost]
         [AllowAnonymous]
-        [Route("/get-token")]
+        [Route("/token")]
         public async Task<IActionResult> GetToken(SignInRequest signInRequest)
         {
             return Ok();
