@@ -9,5 +9,7 @@ namespace TVShowApplication.Services.Interfaces
         Task<T?> InsertUserAsync<T>(T user) where T : User;
         Task<bool> UpdateUserAsync<T>(int id, T user) where T : User;
         Task<bool> DeleteUserAsync<T>(int id) where T : User;
+
+        Task<User?> FindUserAsync(string email);
     }
 }

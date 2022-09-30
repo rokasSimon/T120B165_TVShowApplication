@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using TVShowApplication.Data.DTO;
+using TVShowApplication.Data.DTO.Genre;
 using TVShowApplication.Models;
 
 namespace TVShowApplication.Data.Mapping
@@ -10,6 +10,7 @@ namespace TVShowApplication.Data.Mapping
         {
             CreateMap<CreateGenreDto, Genre>();
             CreateMap<Genre, GetGenreDto>();
+            CreateMap<UpdateGenreDto, Genre>();
         }
     }
 }

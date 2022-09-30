@@ -1,4 +1,4 @@
-﻿namespace TVShowApplication.Data.DTO
+﻿namespace TVShowApplication.Data.DTO.Genre
 {
     public class GetGenreDto
     {

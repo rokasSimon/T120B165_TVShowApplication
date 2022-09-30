@@ -70,5 +70,10 @@ namespace TVShowApplication.Services.Database
         {
             return await _context.SaveChangesAsync() != 0;
         }
+
+        public async Task<User?> FindUserAsync(string email)
+        {
+            return await _context.Users.SingleOrDefaultAsync(x => x.Email == email);
+        }
     }
 }
