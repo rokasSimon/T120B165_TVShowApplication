@@ -6,7 +6,7 @@ namespace TVShowApplication.Services.Interfaces
     {
         Task<Series?> GetSeriesAsync(int id);
         Task<IEnumerable<Series>> GetSeriesAsync();
-        Task<int?> InsertSeriesAsync(Series series);
+        Task<Series?> InsertSeriesAsync(Series series);
         Task<bool> UpdateSeriesAsync(int id, Series series);
         Task<bool> DeleteSeriesAsync(int id);
     }

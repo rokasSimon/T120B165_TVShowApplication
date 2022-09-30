@@ -33,14 +33,14 @@ namespace TVShowApplication.Services.Database
             return await SaveAsync();
         }
 
-        public async Task<int?> InsertReviewAsync(Review review)
+        public async Task<Review?> InsertReviewAsync(Review review)
         {
             var createdReview = await _context.Reviews.AddAsync(review);
             var successfullyCreated = await SaveAsync();
 
             if (successfullyCreated)
             {
-                return createdReview.Entity.Id;
+                return createdReview.Entity;
             }
 
             return null;

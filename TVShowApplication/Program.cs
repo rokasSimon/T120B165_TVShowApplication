@@ -11,6 +11,7 @@ builder.Services.AddDbContext<TVShowContext>(opt =>
 });
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.ConfigureOptions(builder.Configuration);
 
 builder.Services.AddControllers();

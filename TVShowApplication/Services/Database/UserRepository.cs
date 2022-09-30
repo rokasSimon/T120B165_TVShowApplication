@@ -32,7 +32,7 @@ namespace TVShowApplication.Services.Database
             return users;
         }
 
-        public async Task<int?> InsertUserAsync<T>(T user) where T : User
+        public async Task<T?> InsertUserAsync<T>(T user) where T : User
         {
             var set = _context.Set<T>();
 
@@ -41,7 +41,7 @@ namespace TVShowApplication.Services.Database
 
             if (successfullyCreated)
             {
-                return createdUser.Entity.Id;
+                return createdUser.Entity;
             }
 
             return null;

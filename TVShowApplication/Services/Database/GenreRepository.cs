@@ -33,14 +33,14 @@ namespace TVShowApplication.Services.Database
             return await SaveAsync();
         }
 
-        public async Task<int?> InsertGenreAsync(Genre genre)
+        public async Task<Genre?> InsertGenreAsync(Genre genre)
         {
             var createdGenre = await _context.Genres.AddAsync(genre);
             var successfullyCreated = await SaveAsync();
 
             if (successfullyCreated)
             {
-                return createdGenre.Entity.Id;
+                return createdGenre.Entity;
             }
 
             return null;

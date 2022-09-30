@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
+using TVShowApplication.Data.DTO;
 using TVShowApplication.Services.Interfaces;
+using TVShowApplication.Models;
 
 namespace TVShowApplication.Controllers
 {
@@ -10,9 +13,11 @@ namespace TVShowApplication.Controllers
     public class GenreController : ControllerBase
     {
         private readonly IGenreRepository _repository;
+        private readonly IMapper _mapper;
 
-        public GenreController(IGenreRepository repository)
+        public GenreController(IGenreRepository repository, IMapper mapper)
         {
+            _mapper = mapper;
             _repository = repository;
         }
 
@@ -34,14 +39,16 @@ namespace TVShowApplication.Controllers
             return Ok(genre);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> CreateGenre(object createGenreRequest)
-        //{
-        //    var genreId = await _repository.InsertGenreAsync(null);
+        [HttpPost]
+        public async Task<IActionResult> CreateGenre(CreateGenreDto createGenreRequest)
+        {
+            var genre = _mapper.Map<Genre>(createGenreRequest);
 
-        //    if (genreId == null) return BadRequest();
+            var createdGenre = await _repository.InsertGenreAsync(genre);
 
-        //    return CreatedAtAction()
-        //}
+            if (createdGenre == null) return BadRequest();
+
+            return CreatedAtAction(nameof(GetGenreById), _mapper.Map<>(createdGenre));
+        }
     }
 }

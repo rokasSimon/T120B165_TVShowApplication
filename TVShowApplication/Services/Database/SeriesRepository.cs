@@ -33,14 +33,14 @@ namespace TVShowApplication.Services.Database
             return await SaveAsync();
         }
 
-        public async Task<int?> InsertSeriesAsync(Series series)
+        public async Task<Series?> InsertSeriesAsync(Series series)
         {
             var createdSeries = await _context.Series.AddAsync(series);
             var successfullyCreated = await SaveAsync();
 
             if (successfullyCreated)
             {
-                return createdSeries.Entity.Id;
+                return createdSeries.Entity;
             }
 
             return null;
