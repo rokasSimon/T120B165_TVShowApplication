@@ -24,11 +24,11 @@ namespace TVShowApplication.Services.Authentication
 
         public bool VerifyPassword(string hashedPassword, string password, string salt)
         {
+            var hashedPasswordBytes = Encoding.UTF8.GetBytes(hashedPassword);
             var passwordBytes = Encoding.UTF8.GetBytes(password);
             var saltBytes = Encoding.UTF8.GetBytes(salt);
 
             var passwordHash = HashPassword(passwordBytes, saltBytes);
-            var hashedPasswordBytes = Encoding.UTF8.GetBytes(hashedPassword);
 
             return passwordHash.SequenceEqual(hashedPasswordBytes);
         }

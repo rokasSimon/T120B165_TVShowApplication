@@ -20,7 +20,7 @@ namespace TVShowApplication.Bootstrap
                 .AddJwtBearer(options =>
                 {
                     var jwtOptions = new JwtOptions();
-                    configuration.GetSection(JwtOptions.Options).Bind(jwtOptions);
+                    configuration.GetSection(JwtOptions.Jwt).Bind(jwtOptions);
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -34,7 +34,9 @@ namespace TVShowApplication.Bootstrap
                     };
                 });
 
-            services.AddTransient<IJwtGenerator, JwtGenerator>();
+            services.AddScoped<IJwtGenerator, JwtGenerator>();
+            services.AddScoped<IUserManager, UserManager>();
+            services.AddScoped<IPasswordHasher, BcryptHasher>();
         }
     }
 }

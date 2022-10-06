@@ -1,8 +1,11 @@
-﻿namespace TVShowApplication.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace TVShowApplication.Models
 {
+    [Index(nameof(Email), IsUnique = true)]
     public class User
     {
-        public const string Role = nameof(User);
+        public Role Role = Role.User;
 
         public int Id { get; set; }
         public string Email { get; set; }

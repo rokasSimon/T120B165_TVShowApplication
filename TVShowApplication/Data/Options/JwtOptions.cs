@@ -2,7 +2,7 @@
 {
     public class JwtOptions
     {
-        public const string Options = nameof(Options);
+        public const string Jwt = nameof(Jwt);
 
         public string? Issuer { get; set; }
         public string? Audience { get; set; }

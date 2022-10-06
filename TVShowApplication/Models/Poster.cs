@@ -2,7 +2,7 @@
 {
     public class Poster : User
     {
-        public new const string Role = nameof(Poster);
+        public new Role Role = Role.Poster;
 
         public ICollection<Series> PostedSeries { get; set; }
     }

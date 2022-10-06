@@ -12,8 +12,10 @@ builder.Services.AddDbContext<TVShowContext>(opt =>
 });
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
-builder.Services.AddAutoMapper(typeof(Program).Assembly);
+builder.Services.AddRepositories(builder.Configuration);
 builder.Services.ConfigureOptions(builder.Configuration);
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,7 +58,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

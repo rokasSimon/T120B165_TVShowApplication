@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using TVShowApplication.Services.Interfaces;
 using TVShowApplication.Models;
 using TVShowApplication.Data.DTO.Genre;
@@ -10,6 +10,7 @@ namespace TVShowApplication.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class GenreController : ControllerBase
     {
         private readonly IGenreRepository _repository;
@@ -22,7 +23,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Models.User.Role)]
+        [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         public async Task<IActionResult> GetGenres()
         {
             var genres = await _repository.GetGenresAsync();
@@ -31,7 +32,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpGet("{id:int}")]
-        [AuthorizeRoles(Role.Admin)]
+        [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         public async Task<IActionResult> GetGenreById(int id)
         {
             var genre = await _repository.GetGenreAsync(id);
@@ -43,15 +44,14 @@ namespace TVShowApplication.Controllers
 
         [HttpPost]
         [AuthorizeRoles(Role.Admin)]
-        public async Task<IActionResult> CreateGenre(CreateGenreDto createGenreRequest)
+        public async Task<IActionResult> CreateGenre([FromBody] CreateGenreDto createGenreRequest)
         {
             var genre = _mapper.Map<Genre>(createGenreRequest);
 
             var createdGenre = await _repository.InsertGenreAsync(genre);
-
             if (createdGenre == null) return BadRequest();
 
-            return CreatedAtAction(nameof(GetGenreById), _mapper.Map<GetGenreDto>(createdGenre));
+            return CreatedAtAction(nameof(GetGenreById), new { id = createdGenre.Id }, _mapper.Map<GetGenreDto>(createdGenre));
         }
 
         [HttpPut("{id:int}")]

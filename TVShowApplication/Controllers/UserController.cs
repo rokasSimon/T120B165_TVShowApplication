@@ -30,7 +30,7 @@ namespace TVShowApplication.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("/token")]
+        [Route("token")]
         public async Task<IActionResult> GetToken(SignInRequest signInRequest)
         {
             var jwtToken = await _userManager.GetTokenForUser(signInRequest);

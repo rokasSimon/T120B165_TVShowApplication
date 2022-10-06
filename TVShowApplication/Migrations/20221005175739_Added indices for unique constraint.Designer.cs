@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TVShowApplication.Data;
 
@@ -11,9 +12,10 @@ using TVShowApplication.Data;
 namespace TVShowApplication.Migrations
 {
     [DbContext(typeof(TVShowContext))]
-    partial class TVShowContextModelSnapshot : ModelSnapshot
+    [Migration("20221005175739_Added indices for unique constraint")]
+    partial class Addedindicesforuniqueconstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

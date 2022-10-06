@@ -48,8 +48,10 @@ namespace TVShowApplication.Services.Database
 
         public async Task<bool> UpdateGenreAsync(int id, Genre genre)
         {
-            genre.Id = id;
+            var existingGenre = _context.Genres.SingleOrDefaultAsync(x => x.Id == id);
+            if (existingGenre == null) return false;
 
+            genre.Id = id;
             _context.Genres.Update(genre);
 
             return await SaveAsync();

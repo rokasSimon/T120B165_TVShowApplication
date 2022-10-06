@@ -62,13 +62,10 @@ namespace TVShowApplication.Services.Authentication
 
         private static Dictionary<string, string> DefaultClaims(User user)
         {
-            var claims = new Dictionary<string, string>();
-            var roles = user.GetRoles();
-
-            foreach (var role in roles)
+            var claims = new Dictionary<string, string>
             {
-                claims.Add(ClaimTypes.Role, role.ToString());
-            }
+                { ClaimTypes.Role, user.GetRole().ToString() }
+            };
 
             return claims;
         }

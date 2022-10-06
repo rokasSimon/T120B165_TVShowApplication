@@ -6,7 +6,7 @@ namespace TVShowApplication.Bootstrap
     {
         public static void ConfigureOptions(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Options));
+            services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Jwt));
         }
     }
 }

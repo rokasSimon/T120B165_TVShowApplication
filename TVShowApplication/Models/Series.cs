@@ -1,5 +1,8 @@
-﻿namespace TVShowApplication.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace TVShowApplication.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Series
     {
         public int Id { get; set; }
