@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TVShowApplication.Data;
+using TVShowApplication.Data.DTO.Genre;
 using TVShowApplication.Models;
 using TVShowApplication.Services.Interfaces;
 

@@ -16,12 +16,18 @@ namespace TVShowApplication.Services.Database
 
         public async Task<Review?> GetReviewAsync(int id)
         {
-            return await _context.Reviews.SingleOrDefaultAsync(x => x.Id == id);
+            return await _context.Reviews
+                .Include(r => r.Reviewer)
+                .Include(r => r.ReviewedSeries)
+                .SingleOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<IEnumerable<Review>> GetReviewAsync()
         {
-            return await _context.Reviews.ToListAsync();
+            return await _context.Reviews
+                .Include(r => r.Reviewer)
+                .Include(r => r.ReviewedSeries)
+                .ToListAsync();
         }
 
         public async Task<bool> DeleteReviewAsync(int id)
@@ -35,6 +41,17 @@ namespace TVShowApplication.Services.Database
 
         public async Task<Review?> InsertReviewAsync(Review review)
         {
+            if (review.Reviewer == null) return null;
+            var reviewer = await _context.Users.SingleOrDefaultAsync(x => x.Id == review.Reviewer.Id);
+
+            if (reviewer == null) return null;
+            review.Reviewer = reviewer;
+
+            var series = await _context.Series.SingleOrDefaultAsync(x => x.Id == review.ReviewedSeries.Id);
+            if (series == null) return null;
+
+            review.ReviewedSeries = series;
+
             var createdReview = await _context.Reviews.AddAsync(review);
             var successfullyCreated = await SaveAsync();
 
@@ -48,9 +65,13 @@ namespace TVShowApplication.Services.Database
 
         public async Task<bool> UpdateReviewAsync(int id, Review review)
         {
-            review.Id = id;
+            var reviewToUpdate = await _context.Reviews.SingleOrDefaultAsync(x => x.Id == id);
+            if (reviewToUpdate == null) return false;
 
-            _context.Reviews.Update(review);
+            reviewToUpdate.Text = review.Text;
+            reviewToUpdate.Rating = review.Rating;
+
+            _context.Reviews.Update(reviewToUpdate);
 
             return await SaveAsync();
         }

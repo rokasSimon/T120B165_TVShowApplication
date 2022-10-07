@@ -1,4 +1,5 @@
-﻿using TVShowApplication.Models;
+﻿using TVShowApplication.Data.DTO.Genre;
+using TVShowApplication.Models;
 
 namespace TVShowApplication.Services.Interfaces
 {

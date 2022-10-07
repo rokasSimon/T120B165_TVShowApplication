@@ -24,6 +24,7 @@ namespace TVShowApplication.Controllers
 
         [HttpGet]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
+        [ProducesResponseType(200)]
         public async Task<IActionResult> GetGenres()
         {
             var genres = await _repository.GetGenresAsync();
@@ -33,6 +34,8 @@ namespace TVShowApplication.Controllers
 
         [HttpGet("{id:int}")]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> GetGenreById(int id)
         {
             var genre = await _repository.GetGenreAsync(id);
@@ -44,6 +47,8 @@ namespace TVShowApplication.Controllers
 
         [HttpPost]
         [AuthorizeRoles(Role.Admin)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         public async Task<IActionResult> CreateGenre([FromBody] CreateGenreDto createGenreRequest)
         {
             var genre = _mapper.Map<Genre>(createGenreRequest);
@@ -56,6 +61,8 @@ namespace TVShowApplication.Controllers
 
         [HttpPut("{id:int}")]
         [AuthorizeRoles(Role.Admin)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> UpdateGenre(int id, [FromBody] UpdateGenreDto updateGenreRequest)
         {
             var genre = _mapper.Map<Genre>(updateGenreRequest);
@@ -69,6 +76,8 @@ namespace TVShowApplication.Controllers
 
         [HttpDelete("{id:int}")]
         [AuthorizeRoles(Role.Admin)]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         public async Task<IActionResult> DeleteGenre(int id)
         {
             var success = await _repository.DeleteGenreAsync(id);
