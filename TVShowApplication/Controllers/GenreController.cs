@@ -5,10 +5,10 @@ using TVShowApplication.Services.Interfaces;
 using TVShowApplication.Models;
 using TVShowApplication.Data.DTO.Genre;
 using TVShowApplication.Attributes;
+using TVShowApplication.Data;
 
 namespace TVShowApplication.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class GenreController : ControllerBase
@@ -23,6 +23,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpGet]
+        [Route(Routes.GetGenres)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetGenres()
@@ -32,7 +33,8 @@ namespace TVShowApplication.Controllers
             return Ok(_mapper.Map<IEnumerable<GetGenreDto>>(genres));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route(Routes.GetGenreById)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -46,6 +48,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpPost]
+        [Route(Routes.CreateGenre)]
         [AuthorizeRoles(Role.Admin)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -59,7 +62,8 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetGenreById), new { id = createdGenre.Id }, _mapper.Map<GetGenreDto>(createdGenre));
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch]
+        [Route(Routes.UpdateGenre)]
         [AuthorizeRoles(Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -74,7 +78,8 @@ namespace TVShowApplication.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
+        [Route(Routes.DeleteGenre)]
         [AuthorizeRoles(Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]

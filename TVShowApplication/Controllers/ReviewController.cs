@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVShowApplication.Attributes;
+using TVShowApplication.Data;
 using TVShowApplication.Data.DTO.Review;
 using TVShowApplication.Models;
 using TVShowApplication.Services.Interfaces;
 
 namespace TVShowApplication.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class ReviewController : ControllerBase
@@ -23,6 +23,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpGet]
+        [Route(Routes.GetReviews)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetReviews()
@@ -32,7 +33,8 @@ namespace TVShowApplication.Controllers
             return Ok(_mapper.Map<IEnumerable<GetReviewDto>>(review));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route(Routes.GetReviewById)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -46,6 +48,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpPost]
+        [Route(Routes.CreateReview)]
         [AuthorizeRoles(Role.Admin, Role.Poster, Role.User)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -59,7 +62,8 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetReviewById), new { id = createdReview.Id }, _mapper.Map<GetReviewDto>(createdReview));
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch]
+        [Route(Routes.UpdateReview)]
         [AuthorizeRoles(Role.Admin, Role.Poster, Role.User)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -74,7 +78,8 @@ namespace TVShowApplication.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
+        [Route(Routes.DeleteReview)]
         [AuthorizeRoles(Role.Admin, Role.Poster, Role.User)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]

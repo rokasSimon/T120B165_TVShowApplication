@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVShowApplication.Attributes;
+using TVShowApplication.Data;
 using TVShowApplication.Data.DTO.Series;
 using TVShowApplication.Models;
 using TVShowApplication.Services.Interfaces;
 
 namespace TVShowApplication.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class SeriesController : ControllerBase
@@ -25,6 +25,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpGet]
+        [Route(Routes.GetSeries)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         public async Task<IActionResult> GetSeries()
@@ -34,7 +35,8 @@ namespace TVShowApplication.Controllers
             return Ok(_mapper.Map<IEnumerable<GetSeriesDto>>(series));
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet]
+        [Route(Routes.GetSeriesById)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -48,6 +50,7 @@ namespace TVShowApplication.Controllers
         }
 
         [HttpPost]
+        [Route(Routes.CreateSeries)]
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
@@ -61,7 +64,8 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetSeriesById), new { id = createdSeries.Id }, _mapper.Map<GetSeriesDto>(createdSeries));
         }
 
-        [HttpPatch("{id:int}")]
+        [HttpPatch]
+        [Route(Routes.UpdateSeries)]
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
@@ -76,7 +80,8 @@ namespace TVShowApplication.Controllers
             return Ok();
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete]
+        [Route(Routes.DeleteSeries)]
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
