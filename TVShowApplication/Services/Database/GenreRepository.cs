@@ -49,11 +49,12 @@ namespace TVShowApplication.Services.Database
 
         public async Task<bool> UpdateGenreAsync(int id, Genre genre)
         {
-            var existingGenre = _context.Genres.SingleOrDefaultAsync(x => x.Id == id);
+            var existingGenre = await _context.Genres.SingleOrDefaultAsync(x => x.Id == id);
             if (existingGenre == null) return false;
 
-            genre.Id = id;
-            _context.Genres.Update(genre);
+            existingGenre.Description = genre.Description;
+
+            _context.Genres.Update(existingGenre);
 
             return await SaveAsync();
         }

@@ -16,6 +16,8 @@ namespace TVShowApplication.Controllers
         private readonly ISeriesRepository _repository;
         private readonly IMapper _mapper;
 
+        // TODO: {{hostname}}/api/genre/2/series/1/reviews
+
         public SeriesController(ISeriesRepository repository, IMapper mapper)
         {
             _repository = repository;
@@ -59,7 +61,7 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetSeriesById), new { id = createdSeries.Id }, _mapper.Map<GetSeriesDto>(createdSeries));
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPatch("{id:int}")]
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]

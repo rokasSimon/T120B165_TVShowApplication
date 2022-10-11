@@ -59,7 +59,7 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetGenreById), new { id = createdGenre.Id }, _mapper.Map<GetGenreDto>(createdGenre));
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPatch("{id:int}")]
         [AuthorizeRoles(Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]

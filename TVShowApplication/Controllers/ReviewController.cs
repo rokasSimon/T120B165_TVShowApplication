@@ -59,7 +59,7 @@ namespace TVShowApplication.Controllers
             return CreatedAtAction(nameof(GetReviewById), new { id = createdReview.Id }, _mapper.Map<GetReviewDto>(createdReview));
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPatch("{id:int}")]
         [AuthorizeRoles(Role.Admin, Role.Poster, Role.User)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
