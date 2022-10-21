@@ -64,7 +64,8 @@ namespace TVShowApplication.Services.Authentication
         {
             var claims = new Dictionary<string, string>
             {
-                { ClaimTypes.Role, user.GetRole().ToString() }
+                { ClaimTypes.Role, user.GetRole().ToString() },
+                { ClaimTypes.NameIdentifier, user.Id.ToString() },
             };
 
             return claims;

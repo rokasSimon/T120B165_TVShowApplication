@@ -10,7 +10,7 @@ namespace TVShowApplication.Data.Mapping
         public ReviewProfile()
         {
             CreateMap<Review, GetReviewDto>()
-                .ForMember(dest => dest.ReviewedSeries, opt => opt.MapFrom(src => new Link { Href = $"/series/{src.ReviewedSeries.Id}" }))
+                .ForMember(dest => dest.ReviewedSeries, opt => opt.MapFrom(src => new Link { Href = $"/genre/{src.ReviewedSeries.Genres.First().Id}/series/{src.ReviewedSeries.Id}" }))
                 .ForMember(dest => dest.Reviewer, opt => opt.MapFrom(src => src.Reviewer == null ? null : new Link { Href = $"/user/{src.Reviewer.Id}" }));
             CreateMap<CreateReviewDto, Review>()
                 .ForMember(dest => dest.ReviewedSeries, opt => opt.MapFrom(src => new Series { Id = src.Series }))

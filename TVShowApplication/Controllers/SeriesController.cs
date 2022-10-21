@@ -28,9 +28,11 @@ namespace TVShowApplication.Controllers
         [Route(Routes.GetSeries)]
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
-        public async Task<IActionResult> GetSeries()
+        public async Task<IActionResult> GetSeries(int genreId)
         {
-            var series = await _repository.GetSeriesAsync();
+            var series = await _repository.GetSeriesAsync(genreId);
+
+            if (series == null) return NotFound();
 
             return Ok(_mapper.Map<IEnumerable<GetSeriesDto>>(series));
         }
@@ -40,9 +42,9 @@ namespace TVShowApplication.Controllers
         [AuthorizeRoles(Role.User, Role.Poster, Role.Admin)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> GetSeriesById(int id)
+        public async Task<IActionResult> GetSeriesById(int genreId, int seriesId)
         {
-            var series = await _repository.GetSeriesAsync(id);
+            var series = await _repository.GetSeriesAsync(genreId, seriesId);
 
             if (series == null) return NotFound();
 
@@ -54,14 +56,14 @@ namespace TVShowApplication.Controllers
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> CreateSeries([FromBody] CreateSeriesDto createSeriesRequest)
+        public async Task<IActionResult> CreateSeries(int genreId, [FromBody] CreateSeriesDto createSeriesRequest)
         {
             var series = _mapper.Map<Series>(createSeriesRequest);
 
-            var createdSeries = await _repository.InsertSeriesAsync(series);
+            var createdSeries = await _repository.InsertSeriesAsync(genreId, series);
             if (createdSeries == null) return BadRequest();
 
-            return CreatedAtAction(nameof(GetSeriesById), new { id = createdSeries.Id }, _mapper.Map<GetSeriesDto>(createdSeries));
+            return CreatedAtAction(nameof(GetSeriesById), new { genreId = genreId, seriesId = createdSeries.Id }, _mapper.Map<GetSeriesDto>(createdSeries));
         }
 
         [HttpPatch]
@@ -69,11 +71,11 @@ namespace TVShowApplication.Controllers
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> UpdateSeries(int id, [FromBody] UpdateSeriesDto updateSeriesRequest)
+        public async Task<IActionResult> UpdateSeries(int genreId, int seriesId, [FromBody] UpdateSeriesDto updateSeriesRequest)
         {
             var series = _mapper.Map<Series>(updateSeriesRequest);
 
-            var success = await _repository.UpdateSeriesAsync(id, series);
+            var success = await _repository.UpdateSeriesAsync(genreId, seriesId, series);
 
             if (!success) return NotFound();
 
@@ -85,9 +87,9 @@ namespace TVShowApplication.Controllers
         [AuthorizeRoles(Role.Admin, Role.Poster)]
         [ProducesResponseType(200)]
         [ProducesResponseType(404)]
-        public async Task<IActionResult> DeleteSeries(int id)
+        public async Task<IActionResult> DeleteSeries(int genreId, int seriesId)
         {
-            var success = await _repository.DeleteSeriesAsync(id);
+            var success = await _repository.DeleteSeriesAsync(genreId, seriesId);
 
             if (!success) return NotFound();
 

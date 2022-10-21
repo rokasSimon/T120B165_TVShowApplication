@@ -10,7 +10,7 @@ namespace TVShowApplication.Data.Mapping
         {
             CreateMap<CreateGenreDto, Genre>();
             CreateMap<Genre, GetGenreDto>()
-                .ForMember(dest => dest.Series, opt => opt.MapFrom(src => src.Videos.Select(x => $"/series/{x}")));
+                .ForMember(dest => dest.Series, opt => opt.MapFrom(src => src.Videos.Select(x => $"/genre/{src.Id}/series/{x.Id}")));
             CreateMap<UpdateGenreDto, Genre>();
         }
     }

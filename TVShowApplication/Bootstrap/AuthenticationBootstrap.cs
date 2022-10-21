@@ -37,6 +37,7 @@ namespace TVShowApplication.Bootstrap
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserManager, UserManager>();
             services.AddScoped<IPasswordHasher, BcryptHasher>();
+            services.AddScoped<IUserDataProvider, UserDataProvider>();
         }
     }
 }

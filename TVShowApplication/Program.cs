@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TVShowApplication.Bootstrap;
 using TVShowApplication.Data;
+using TVShowApplication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserDataMiddleware>();
 
 app.MapControllers();
 

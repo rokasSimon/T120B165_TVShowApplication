@@ -36,5 +36,15 @@ namespace TVShowApplication.Extensions
                 _ => Array.Empty<Role>(),
             };
         }
+
+        public static bool IsInRoles(this Role role, params Role[] requiredRoles)
+        {
+            foreach (var r in requiredRoles)
+            {
+                if (role == r) return true;
+            }
+
+            return false;
+        }
     }
 }
