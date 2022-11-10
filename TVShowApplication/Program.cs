@@ -1,10 +1,39 @@
+using Hellang.Middleware.ProblemDetails;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TVShowApplication.Bootstrap;
 using TVShowApplication.Data;
+using TVShowApplication.Exceptions;
 using TVShowApplication.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddProblemDetails(options =>
+{
+    options.IncludeExceptionDetails = (ctx, ex) => builder.Environment.IsDevelopment();
+
+    options.Map<UnauthorizedException>(ex => new ProblemDetails
+    {
+        Title = "Unauthorized",
+        Status = StatusCodes.Status403Forbidden,
+        Detail = ex.Message,
+    });
+
+    options.Map<ResourceNotFoundException>(ex => new ProblemDetails
+    {
+        Title = "NotFound",
+        Status = StatusCodes.Status404NotFound,
+        Detail = ex.Message,
+    });
+
+    options.Map<UnupdateableResourceException>(ex => new ProblemDetails
+    {
+        Title = "Cannot update resource",
+        Status = StatusCodes.Status403Forbidden,
+        Detail = ex.Message,
+    });
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<TVShowContext>(opt =>
@@ -50,6 +79,8 @@ builder.Services.AddSwaggerGen(opt =>
 });
 
 var app = builder.Build();
+
+app.UseProblemDetails();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

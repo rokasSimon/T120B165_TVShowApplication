@@ -33,11 +33,33 @@ namespace TVShowApplication.Controllers
         [Route("token")]
         public async Task<IActionResult> GetToken(SignInRequest signInRequest)
         {
-            var jwtToken = await _userManager.GetTokenForUser(signInRequest);
+            var tokens = await _userManager.GetTokenForUser(signInRequest);
 
-            if (jwtToken == null) return BadRequest();
+            if (tokens == null) return Unauthorized();
 
-            return Ok(jwtToken);
+            return Ok(tokens);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("token/refresh")]
+        public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshRequest)
+        {
+            var authentication = await _userManager.RefreshToken(refreshRequest);
+
+            if (authentication == null) return Unauthorized();
+
+            return Ok(authentication);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("token/revoke")]
+        public async Task<IActionResult> RevokeToken()
+        {
+            await _userManager.Revoke();
+
+            return Ok();
         }
     }
 }

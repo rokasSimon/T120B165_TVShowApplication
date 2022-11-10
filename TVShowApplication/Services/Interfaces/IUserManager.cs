@@ -6,6 +6,8 @@ namespace TVShowApplication.Services.Interfaces
     public interface IUserManager
     {
         Task<bool> CreateUser(SignUpRequest request);
-        Task<string?> GetTokenForUser(SignInRequest request);
+        Task<AuthenticatedResponse?> GetTokenForUser(SignInRequest request);
+        Task<AuthenticatedResponse?> RefreshToken(RefreshTokenRequest request);
+        Task Revoke(int? userId = null);
     }
 }

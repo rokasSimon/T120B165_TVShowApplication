@@ -77,7 +77,7 @@ namespace TVShowApplication.Services.Database
                     .ThenInclude(v => v.Poster)
                 .SingleOrDefaultAsync(x => x.Id == genreId);
 
-            if (genre == null) return null;
+            if (genre == null) throw new ResourceNotFoundException($"There is no such genre: '{genreId}'.");
 
             return genre.Videos.SingleOrDefault(x => x.Id == seriesId);
         }
@@ -93,7 +93,7 @@ namespace TVShowApplication.Services.Database
                     .ThenInclude(v => v.Poster)
                 .SingleOrDefaultAsync(x => x.Id == genreId);
 
-            if (genre == null) return Array.Empty<Series>();
+            if (genre == null) throw new ResourceNotFoundException($"There is no such genre: '{genreId}'.");
 
             return genre.Videos;
         }
@@ -136,10 +136,10 @@ namespace TVShowApplication.Services.Database
                 .Include(g => g.Videos)
                     .ThenInclude(v => v.Poster)
                 .SingleOrDefaultAsync(x => x.Id == genreId);
-            if (genre == null) return false;
+            if (genre == null) throw new ResourceNotFoundException($"There is no such genre: '{genreId}'.");
 
             var seriesToUpdate = genre.Videos.SingleOrDefault(x => x.Id == seriesId);
-            if (seriesToUpdate == null) return false;
+            if (seriesToUpdate == null) throw new ResourceNotFoundException($"There is no such series: '{seriesId}'.");
 
             seriesToUpdate.Description = series.Description;
             seriesToUpdate.Directors = series.Directors;
@@ -157,10 +157,10 @@ namespace TVShowApplication.Services.Database
             var genre = await _context.Genres
                 .Include(g => g.Videos)
                 .SingleOrDefaultAsync(x => x.Id == genreId);
-            if (genre == null) return false;
+            if (genre == null) throw new ResourceNotFoundException($"There is no such genre: '{genreId}'.");
 
             var seriesToDelete = genre.Videos.SingleOrDefault(x => x.Id == seriesId);
-            if (seriesToDelete == null) return false;
+            if (seriesToDelete == null) throw new ResourceNotFoundException($"There is no such series: '{seriesId}'.");
 
             _context.Series.Remove(seriesToDelete);
 

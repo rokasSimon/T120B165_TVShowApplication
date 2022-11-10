@@ -8,5 +8,6 @@
         public string? Audience { get; set; }
         public string? Secret { get; set; }
         public int? ExpirationSeconds { get; set; }
+        public int? RefreshTokenExpirationDays { get; set; }
     }
 }
