@@ -3,6 +3,7 @@ using TVShowApplication.Data;
 using TVShowApplication.Models;
 using TVShowApplication.Extensions;
 using TVShowApplication.Services.Interfaces;
+using TVShowApplication.Exceptions;
 
 namespace TVShowApplication.Services.Database
 {
@@ -35,7 +36,8 @@ namespace TVShowApplication.Services.Database
         {
             Fault.IfMissingRole(_userDataProvider.UserRole, Role.Admin);
 
-            var genreToDelete = new Genre { Id = id };
+            var genreToDelete = await _context.Genres.FirstOrDefaultAsync(x => x.Id == id);
+            if (genreToDelete == null) throw new ResourceNotFoundException("Genre does not exist.");
 
             _context.Genres.Remove(genreToDelete);
 
