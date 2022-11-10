@@ -38,7 +38,8 @@ builder.Services.AddProblemDetails(options =>
 // Add services to the container.
 builder.Services.AddDbContext<TVShowContext>(opt =>
 {
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    //opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseInMemoryDatabase("TVShowApplication");
 });
 
 builder.Services.AddAuthenticationServices(builder.Configuration);
