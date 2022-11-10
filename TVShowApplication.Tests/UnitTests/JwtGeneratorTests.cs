@@ -27,7 +27,7 @@ namespace TVShowApplication.Tests.UnitTests
         }
 
         [Test]
-        public void GetPrinciap_GivenInvalidJwtToken_ThrowsArgumentException()
+        public void GetPrincipal_GivenInvalidJwtToken_ThrowsArgumentException()
         {
             var invalidSignedToken = "this is not a JWT";
 
