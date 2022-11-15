@@ -59,6 +59,9 @@ namespace TVShowApplication.Services.Database
         {
             Fault.IfMissingRole(_userDataProvider.UserRole, Role.Admin, Role.Poster);
 
+            var existingSeries = await _context.Series.SingleOrDefaultAsync(x => x.Id == series.Id);
+            if (existingSeries != null) return null;
+
             var genreIds = series.Genres
                 .Select(series => series.Id)
                 .Append(genreId)
@@ -75,14 +78,9 @@ namespace TVShowApplication.Services.Database
             series.Poster = posterFromDb;
 
             var createdSeries = await _context.Series.AddAsync(series);
-            var successfullyCreated = await SaveAsync();
+            await SaveAsync();
 
-            if (successfullyCreated)
-            {
-                return createdSeries.Entity;
-            }
-
-            return null;
+            return createdSeries.Entity;
         }
 
         public async Task<bool> UpdateSeriesAsync(int genreId, int seriesId, Series series)

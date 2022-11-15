@@ -63,8 +63,10 @@ namespace TVShowApplication.Services.Database
         {
             if (review.Reviewer == null || review.Reviewer.Id != _userDataProvider.UserId) return null;
 
-            var reviewer = await _context.Users.SingleOrDefaultAsync(x => x.Id == _userDataProvider.UserId);
-            if (reviewer == null) throw new ResourceNotFoundException($"There is no such reviewer: '{review.Reviewer.Id}'.");
+            var existingReview = await _context.Reviews.SingleOrDefaultAsync(x => x.Id == review.Id);
+            if (existingReview != null) return null;
+
+            var reviewer = await _context.Users.SingleAsync(x => x.Id == _userDataProvider.UserId);
             review.Reviewer = reviewer;
 
             var series = await _context.Series
@@ -76,14 +78,9 @@ namespace TVShowApplication.Services.Database
             review.ReviewedSeries = series;
 
             var createdReview = await _context.Reviews.AddAsync(review);
-            var successfullyCreated = await SaveAsync();
+            await SaveAsync();
 
-            if (successfullyCreated)
-            {
-                return createdReview.Entity;
-            }
-
-            return null;
+            return createdReview.Entity;
         }
 
         public async Task<bool> UpdateReviewAsync(int genreId, int seriesId, int reviewId, Review review)

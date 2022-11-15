@@ -38,7 +38,7 @@ namespace TVShowApplication.Data
             modelBuilder.Entity<Poster>()
                 .HasMany(p => p.PostedSeries)
                 .WithOne(s => s.Poster)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             base.OnModelCreating(modelBuilder);
         }
