@@ -102,6 +102,55 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
             result.Should().BeNull();
         }
 
+        [Test, Order(2)]
+        public async Task InsertSeriesAsync_MultipleGenresNonExistent_ReturnsNull()
+        {
+            var seriesToCreate = new Series
+            {
+                Id = 2,
+                Name = "Test 2",
+                Description = ".",
+                CoverImagePath = ".",
+                StarringCast = new[] { "c" },
+                Directors = new[] { "d" },
+                Poster = _admin,
+                Reviews = new List<Review>(),
+                Genres = new List<Genre>
+                {
+                    _genre,
+                    new Genre { Id = 2, Name = "Test genre 2", Description = "Test desc 2", Videos = new List<Series>() }
+                },
+            };
+
+            var result = await _seriesRepository.InsertSeriesAsync(_genre.Id, seriesToCreate);
+
+            result.Should().BeNull();
+        }
+
+        [Test, Order(2)]
+        public async Task InsertSeriesAsync_PosterNonExistent_ReturnsNull()
+        {
+            var seriesToCreate = new Series
+            {
+                Id = 2,
+                Name = "Test 2",
+                Description = ".",
+                CoverImagePath = ".",
+                StarringCast = new[] { "c" },
+                Directors = new[] { "d" },
+                Poster = new Poster { Id = InvalidId, Email = "tes.test@gmail.com", HashedPassword = "test", Salt = "test", PostedSeries = new List<Series>(), Reviews = new List<Review>() },
+                Reviews = new List<Review>(),
+                Genres = new List<Genre>
+                {
+                    _genre,
+                },
+            };
+
+            var result = await _seriesRepository.InsertSeriesAsync(_genre.Id, seriesToCreate);
+
+            result.Should().BeNull();
+        }
+
         [Test, Order(3)]
         public async Task GetSeriesAsync_ValidGenreAndSeries_ReturnsExpectedSeries()
         {
