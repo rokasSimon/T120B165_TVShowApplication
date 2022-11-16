@@ -10,8 +10,11 @@ using TVShowApplication.Services.Interfaces;
 
 namespace TVShowApplication.Tests.IntegrationTests.Repository
 {
+    [TestFixture]
     internal class SeriesRepositoryTests
     {
+        private const int InvalidId = 9999;
+
         private TVShowContext _context;
         private ISeriesRepository _seriesRepository;
         private Genre _genre;
@@ -79,6 +82,76 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         }
 
         [Test, Order(2)]
+        public async Task InsertSeriesAsync_TakenSeriesId_ReturnsNull()
+        {
+            var seriesToCreate = new Series
+            {
+                Id = 1,
+                Name = "Test 2",
+                Description = ".",
+                CoverImagePath = ".",
+                StarringCast = new[] { "c" },
+                Directors = new[] { "d" },
+                Poster = _admin,
+                Reviews = new List<Review>(),
+                Genres = new List<Genre> { _genre },
+            };
+
+            var result = await _seriesRepository.InsertSeriesAsync(_genre.Id, seriesToCreate);
+
+            result.Should().BeNull();
+        }
+
+        [Test, Order(2)]
+        public async Task InsertSeriesAsync_MultipleGenresNonExistent_ReturnsNull()
+        {
+            var seriesToCreate = new Series
+            {
+                Id = 2,
+                Name = "Test 2",
+                Description = ".",
+                CoverImagePath = ".",
+                StarringCast = new[] { "c" },
+                Directors = new[] { "d" },
+                Poster = _admin,
+                Reviews = new List<Review>(),
+                Genres = new List<Genre>
+                {
+                    _genre,
+                    new Genre { Id = 2, Name = "Test genre 2", Description = "Test desc 2", Videos = new List<Series>() }
+                },
+            };
+
+            var result = await _seriesRepository.InsertSeriesAsync(_genre.Id, seriesToCreate);
+
+            result.Should().BeNull();
+        }
+
+        [Test, Order(2)]
+        public async Task InsertSeriesAsync_PosterNonExistent_ReturnsNull()
+        {
+            var seriesToCreate = new Series
+            {
+                Id = 2,
+                Name = "Test 2",
+                Description = ".",
+                CoverImagePath = ".",
+                StarringCast = new[] { "c" },
+                Directors = new[] { "d" },
+                Poster = new Poster { Id = InvalidId, Email = "tes.test@gmail.com", HashedPassword = "test", Salt = "test", PostedSeries = new List<Series>(), Reviews = new List<Review>() },
+                Reviews = new List<Review>(),
+                Genres = new List<Genre>
+                {
+                    _genre,
+                },
+            };
+
+            var result = await _seriesRepository.InsertSeriesAsync(_genre.Id, seriesToCreate);
+
+            result.Should().BeNull();
+        }
+
+        [Test, Order(3)]
         public async Task GetSeriesAsync_ValidGenreAndSeries_ReturnsExpectedSeries()
         {
             var seriesToGet = _createdSeries!.Id;
@@ -90,7 +163,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         }
 
         [Test, Order(3)]
-        public async Task GetSeriesAsync_ReturnsExpectedSeries()
+        public async Task GetSeriesAsync_GivenOnlyGenre_ReturnsExpectedSeries()
         {
             var series = await _seriesRepository.GetSeriesAsync(_genre.Id);
 
@@ -128,7 +201,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(6)]
         public async Task GetSingleSeriesAsync_GivenInvalidGenre_ThrowsNotFound()
         {
-            var act = () => _seriesRepository.GetSeriesAsync(9999, _createdSeries!.Id);
+            var act = () => _seriesRepository.GetSeriesAsync(InvalidId, _createdSeries!.Id);
 
             await act.Should().ThrowAsync<ResourceNotFoundException>();
         }
@@ -136,7 +209,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(7)]
         public async Task GetSeriesAsync_GivenInvalidGenre_ThrowsNotFound()
         {
-            var act = () => _seriesRepository.GetSeriesAsync(9999);
+            var act = () => _seriesRepository.GetSeriesAsync(InvalidId);
 
             await act.Should().ThrowAsync<ResourceNotFoundException>();
         }
@@ -144,7 +217,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(8)]
         public async Task GetSingleSeriesAsync_GivenValidGenreAndInvalidSeries_ReturnsNull()
         {
-            var series = await _seriesRepository.GetSeriesAsync(_genre.Id, 9999);
+            var series = await _seriesRepository.GetSeriesAsync(_genre.Id, InvalidId);
 
             series.Should().BeNull();
         }
@@ -179,7 +252,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
                 StarringCast = new[] { "Leonardo DiCaprio" },
             };
 
-            var act = () => _seriesRepository.UpdateSeriesAsync(_genre.Id, 9999, seriesToUpdate);
+            var act = () => _seriesRepository.UpdateSeriesAsync(_genre.Id, InvalidId, seriesToUpdate);
 
             await act.Should().ThrowAsync<ResourceNotFoundException>();
             _createdSeries.Description.Should().Be(oldDescription);
@@ -188,7 +261,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(11)]
         public async Task DeleteSeriesAsync_GivenInvalidGenre_ThrowsNotFoundException()
         {
-            var act = () => _seriesRepository.DeleteSeriesAsync(9999, _createdSeries!.Id);
+            var act = () => _seriesRepository.DeleteSeriesAsync(InvalidId, _createdSeries!.Id);
 
             await act.Should().ThrowAsync<ResourceNotFoundException>();
         }
@@ -196,7 +269,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(12)]
         public async Task DeleteSeriesAsync_GivenValidGenreAndInvalidSeries_ThrowsNotFoundException()
         {
-            var act = () => _seriesRepository.DeleteSeriesAsync(_genre.Id, 9999);
+            var act = () => _seriesRepository.DeleteSeriesAsync(_genre.Id, InvalidId);
 
             await act.Should().ThrowAsync<ResourceNotFoundException>();
         }

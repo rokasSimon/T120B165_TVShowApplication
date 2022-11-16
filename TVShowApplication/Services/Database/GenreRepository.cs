@@ -48,15 +48,13 @@ namespace TVShowApplication.Services.Database
         {
             Fault.IfMissingRole(_userDataProvider.UserRole, Role.Admin);
 
+            var existingGenre = await _context.Genres.SingleOrDefaultAsync(x => x.Id == genre.Id);
+            if (existingGenre != null) return null;
+
             var createdGenre = await _context.Genres.AddAsync(genre);
-            var successfullyCreated = await SaveAsync();
+            await SaveAsync();
 
-            if (successfullyCreated)
-            {
-                return createdGenre.Entity;
-            }
-
-            return null;
+            return createdGenre.Entity;
         }
 
         public async Task<bool> UpdateGenreAsync(int id, Genre genre)

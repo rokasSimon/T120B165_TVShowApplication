@@ -13,7 +13,10 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
     [TestFixture]
     internal class GenreRepositoryTests
     {
+        private const int InvalidId = 9999;
+
         private TVShowContext _context;
+        private IUserDataProvider _userDataProvider;
         private IGenreRepository _genreRepository;
 
         private Genre? _createdGenre;
@@ -44,7 +47,8 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
             _context.Admins.Add(adminUser);
             _context.SaveChanges();
 
-            _genreRepository = new GenreRepository(_context, new UserDataProvider { UserId = adminUser.Id, UserRole = Models.Role.Admin });
+            _userDataProvider = new UserDataProvider { UserId = adminUser.Id, UserRole = Models.Role.Admin };
+            _genreRepository = new GenreRepository(_context, _userDataProvider);
         }
 
         [Test, Order(1)]
@@ -55,6 +59,16 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
             _createdGenre = await _genreRepository.InsertGenreAsync(genreToCreate);
 
             _createdGenre.Should().NotBeNull();
+        }
+
+        [Test, Order(2)]
+        public async Task InsertGenreAsync_TakenGenreId_ReturnsNull()
+        {
+            var genreToCreate = new Genre { Id = 1, Name = "Test 2", Description = "Test 2", Videos = new List<Series>() };
+
+            var result = await _genreRepository.InsertGenreAsync(genreToCreate);
+
+            result.Should().BeNull();
         }
 
         [Test, Order(2)]
@@ -69,7 +83,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         }
 
         [Test, Order(3)]
-        public async Task GetGenresAsync_ReturnsExpectedGenres()
+        public async Task GetGenresAsync_GivenNoParameters_ReturnsExpectedGenres()
         {
             var genres = await _genreRepository.GetGenresAsync();
 
@@ -112,7 +126,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         {
             const string newDescription = "New Name";
             var oldDescription = _createdGenre!.Description;
-            var genreUpdate = new Genre { Id = 9999, Name = _createdGenre.Name, Description = newDescription, Videos = _createdGenre.Videos };
+            var genreUpdate = new Genre { Id = InvalidId, Name = _createdGenre.Name, Description = newDescription, Videos = _createdGenre.Videos };
 
             var success = await _genreRepository.UpdateGenreAsync(genreUpdate.Id, genreUpdate);
 
@@ -123,7 +137,7 @@ namespace TVShowApplication.Tests.IntegrationTests.Repository
         [Test, Order(8)]
         public async Task DeleteGenreAsync_GivenInvalidId_ThrowsNotFoundException()
         {
-            var genreToDeleteId = 9999;
+            var genreToDeleteId = InvalidId;
 
             var act = () => _genreRepository.DeleteGenreAsync(genreToDeleteId);
 

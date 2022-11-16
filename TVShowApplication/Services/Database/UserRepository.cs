@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TVShowApplication.Data;
+using TVShowApplication.Exceptions;
 using TVShowApplication.Models;
 using TVShowApplication.Services.Interfaces;
 
@@ -36,30 +37,35 @@ namespace TVShowApplication.Services.Database
         {
             var set = _context.Set<T>();
 
+            var existingUser = await set.SingleOrDefaultAsync(x => x.Id == user.Id);
+            if (existingUser != null) return null;
+
             var createdUser = await set.AddAsync(user);
-            var successfullyCreated = await SaveAsync();
+            await SaveAsync();
 
-            if (successfullyCreated)
-            {
-                return createdUser.Entity;
-            }
-
-            return null;
+            return createdUser.Entity;
         }
 
         public async Task<bool> UpdateUserAsync<T>(int id, T user) where T : User
         {
             var set = _context.Set<T>();
 
-            user.Id = id;
-            set.Update(user);
+            var userFromDb = await set.SingleOrDefaultAsync(x => x.Id == id);
+            if (userFromDb == null) throw new ResourceNotFoundException("No such user exists.");
+
+            userFromDb.Email = user.Email;
+
+            set.Update(userFromDb);
 
             return await SaveAsync();
         }
 
         public async Task<bool> DeleteUserAsync<T>(int id) where T : User
         {
-            var userToBeDeleted = new User { Id = id };
+            var set = _context.Set<T>();
+
+            var userToBeDeleted = await set.SingleOrDefaultAsync(x => x.Id == id);
+            if (userToBeDeleted == null) throw new ResourceNotFoundException("No such user exists.");
 
             _context.Users.Remove(userToBeDeleted);
 
