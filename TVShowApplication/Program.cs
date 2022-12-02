@@ -1,5 +1,6 @@
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TVShowApplication.Bootstrap;
@@ -78,6 +79,11 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
+builder.Services.AddSpaStaticFiles(spa =>
+{
+    spa.RootPath = "ClientApp";
+});
+
 var app = builder.Build();
 
 app.UseProblemDetails();
@@ -90,6 +96,21 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseSpaStaticFiles();
+
+app.MapWhen(req => !req.Request.Path.Value.StartsWith("/api"), appBuilder =>
+{
+    appBuilder.UseSpa(spa =>
+    {
+        spa.Options.SourcePath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp");
+
+        if (builder.Environment.IsDevelopment())
+        {
+            spa.UseReactDevelopmentServer("start");
+        }
+    });
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

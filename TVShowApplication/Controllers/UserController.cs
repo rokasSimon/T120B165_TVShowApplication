@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TVShowApplication.Data.DTO.User;
-using TVShowApplication.Services.Database;
 using TVShowApplication.Services.Interfaces;
 
 namespace TVShowApplication.Controllers

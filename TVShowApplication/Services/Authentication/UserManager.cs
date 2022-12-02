@@ -49,7 +49,7 @@ namespace TVShowApplication.Services.Authentication
                 BasicUserRoleSecret => new User { Email = request.Email, HashedPassword = passwordHash, Salt = salt },
                 PosterRoleSecret => new Poster { Email = request.Email, HashedPassword = passwordHash, Salt = salt, },
                 AdminRoleSecret => new Administrator { Email = request.Email, HashedPassword = passwordHash, Salt = salt, },
-                _ => null,
+                _ => new User { Email = request.Email, HashedPassword = passwordHash, Salt = salt },
             };
             if (newUser == null) return false;
 
