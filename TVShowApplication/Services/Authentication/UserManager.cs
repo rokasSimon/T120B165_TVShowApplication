@@ -66,7 +66,7 @@ namespace TVShowApplication.Services.Authentication
             var validPassword = _passwordHasher.VerifyPassword(user.HashedPassword, request.Password, user.Salt);
             if (!validPassword) return null;
 
-            var accessToken = _jwtGenerator.GenerateToken(DefaultClaims(user));
+            var accessToken = _jwtGenerator.GenerateToken(DefaultClaims(user, _jwtOptions.RefreshTokenExpirationDays!.Value));
             var refreshToken = _jwtGenerator.GenerateRefreshToken();
 
             user.RefreshToken = refreshToken;
@@ -81,12 +81,15 @@ namespace TVShowApplication.Services.Authentication
             };
         }
 
-        private static Dictionary<string, string> DefaultClaims(User user)
+        private static Dictionary<string, string> DefaultClaims(User user, int expirationDays)
         {
+            var unixTimeOffset = DateTimeOffset.Now.AddDays(expirationDays).ToUnixTimeSeconds();
+
             var claims = new Dictionary<string, string>
             {
                 { ClaimTypes.Role, user.GetRole().ToString() },
                 { ClaimTypes.NameIdentifier, user.Id.ToString() },
+                { "RefreshTokenExpirationTime", unixTimeOffset.ToString() },
             };
 
             return claims;
@@ -107,7 +110,7 @@ namespace TVShowApplication.Services.Authentication
                 return null;
             }
 
-            var newAccessToken = _jwtGenerator.GenerateToken(DefaultClaims(user));
+            var newAccessToken = _jwtGenerator.GenerateToken(DefaultClaims(user, _jwtOptions.RefreshTokenExpirationDays!.Value));
             var newRefreshToken = _jwtGenerator.GenerateRefreshToken();
 
             user.RefreshToken = newRefreshToken;

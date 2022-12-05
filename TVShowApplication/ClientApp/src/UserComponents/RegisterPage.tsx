@@ -1,9 +1,10 @@
 ﻿import { useState } from "react";
 import { Container } from "react-bootstrap";
-import { useAuthenticationContext } from "../App";
+import { register, useAuthDispatch } from "../AuthProvider";
 
 function RegisterPage(props: any) {
-    const { authenticationManager } = useAuthenticationContext();
+    const authDispatch = useAuthDispatch();
+
     let [email, setEmail] = useState<string | null>(null);
     let [password, setPassword] = useState<string | null>(null);
     let [roleSecret, setRoleSecret] = useState<string>('basic-user');
@@ -12,11 +13,10 @@ function RegisterPage(props: any) {
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(`${email} ${password} ${roleSecret}`);
 
         if (!email || !password) return;
 
-        const success = await authenticationManager.register({ Email: email, Password: password, RoleSecret: roleSecret });
+        const success = await register(authDispatch, { Email: email, Password: password, RoleSecret: roleSecret });
         setSuccessRegistering(success);
     };
 

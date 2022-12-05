@@ -111,6 +111,18 @@ app.MapWhen(req => !req.Request.Path.Value.StartsWith("/api"), appBuilder =>
     });
 });
 
+app.Use(async (req, next) =>
+{
+    var headers = req.Request.Headers.ToList();
+
+    foreach (var item in headers)
+    {
+        Console.WriteLine($"{item.Key}: {item.Value}");
+    }
+
+    await next();
+});
+
 app.UseAuthentication();
 app.UseAuthorization();
 

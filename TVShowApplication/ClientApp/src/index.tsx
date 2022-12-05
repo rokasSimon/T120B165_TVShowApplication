@@ -8,6 +8,10 @@ import ErrorPage from './ErrorPage';
 import HomePage from './HomePage';
 import LoginPage from './UserComponents/Login';
 import RegisterPage from './UserComponents/RegisterPage';
+import GenreList from './Pages/GenreList';
+import { AuthProvider } from './AuthProvider';
+import { AxiosInstanceProvider } from './AxiosInstanceProvider';
+import GenreView from './Pages/GenreView';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,14 +35,24 @@ const router = createBrowserRouter([
                 path: '/user/register',
                 element: <RegisterPage />
             },
+            {
+                path: '/genre',
+                element: <GenreList />
+            },
+            {
+                path: '/genre/:genreId',
+                element: <GenreView />
+            }
         ],
     }
 ]);
 
 root.render(
-    <React.StrictMode>
-        <RouterProvider router={router} />
-    </React.StrictMode>
+    <AuthProvider>
+        <AxiosInstanceProvider>
+            <RouterProvider router={router} />
+        </AxiosInstanceProvider>
+    </AuthProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -10,10 +10,12 @@ namespace TVShowApplication.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserManager _userManager;
+        private ILogger<UserController> _logger;
 
-        public UserController(IUserManager userManager)
+        public UserController(IUserManager userManager, ILogger<UserController> logger)
         {
             _userManager = userManager;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -35,6 +37,7 @@ namespace TVShowApplication.Controllers
             var tokens = await _userManager.GetTokenForUser(signInRequest);
 
             if (tokens == null) return Unauthorized();
+            _logger.LogDebug("Sending tokens: access = {Token}; refresh = {Refresh}", tokens.AccessToken, tokens.RefreshToken);
 
             return Ok(tokens);
         }
