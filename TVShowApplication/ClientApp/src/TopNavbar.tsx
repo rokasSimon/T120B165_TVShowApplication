@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Container, Modal, Nav, Navbar } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import { Role } from './AuthenticationTypes';
 import { logout, useAuthDispatch, useAuthState } from './AuthProvider';
 import { useAxiosContext } from './AxiosInstanceProvider';
 
@@ -8,6 +9,7 @@ function TopNavbar(props: any) {
     const authState = useAuthState();
 
     let userSection;
+
     if (authState.user) {
         userSection =
             <LoggedInUser />
@@ -56,6 +58,11 @@ function LoggedInUser(props: any) {
 
     return (
         <Nav>
+            {authState.user && (authState.user.Role == Role.Admin || authState.user?.Role == Role.Poster) &&
+                <Link className="link-light mx-2" to={'/series/create'}>
+                    Post Series
+                </Link>
+            }
             <Button variant="secondary" onClick={e => handleShow()}>Sign Out</Button>
             <Modal className="text-light" backdrop={true} show={showSignout} onHide={handleClose}>
                 <Modal.Header className="bg-dark">

@@ -26,6 +26,10 @@
         background-color: #393939 !important;
     }
 
+a.link-light {
+    align-self: center;
+}
+
 textarea {
     min-height: 10vh !important;
 }
@@ -37,3 +41,16 @@ textarea {
     textarea::-webkit-scrollbar-thumb {
         background-color: var(--app-bg);
     }
+
+.array-input-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    margin: 0.5em 0em;
+}
+
+.inline-item {
+    display: inline;
+    margin: 0 0.25em;
+}

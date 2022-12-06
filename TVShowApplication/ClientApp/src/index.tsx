@@ -12,6 +12,8 @@ import GenreList from './Pages/GenreList';
 import { AuthProvider } from './AuthProvider';
 import { AxiosInstanceProvider } from './AxiosInstanceProvider';
 import GenreView from './Pages/GenreView';
+import CreateSeriesPage from './Pages/CreateSeriesPage';
+import SeriesView from './Pages/SeriesView';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -42,6 +44,14 @@ const router = createBrowserRouter([
             {
                 path: '/genre/:genreId',
                 element: <GenreView />
+            },
+            {
+                path: '/series/create',
+                element: <CreateSeriesPage />
+            },
+            {
+                path: '/genre/:genreId/series/:seriesId',
+                element: <SeriesView />
             }
         ],
     }

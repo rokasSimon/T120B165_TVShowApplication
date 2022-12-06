@@ -24,4 +24,10 @@ function parseJwt(token: string): AccessTokenPayload {
     return accessTokenPayload;
 }
 
-export { unixTime, parseJwt };
+function capText(text: string, maxSize: number): string {
+    if (text.length <= maxSize) return text;
+
+    return text.substr(0, maxSize) + ' ...';
+}
+
+export { unixTime, parseJwt, capText };

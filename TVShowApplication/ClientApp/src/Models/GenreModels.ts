@@ -2,7 +2,7 @@
     id: number,
     name: string,
     description: string,
-    seriesLinks: string[]
+    series: string[]
 }
 
 type CreateGenreDTO = {

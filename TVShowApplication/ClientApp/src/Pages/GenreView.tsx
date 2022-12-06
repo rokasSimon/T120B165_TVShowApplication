@@ -1,12 +1,16 @@
 ﻿import { useEffect, useState } from "react";
-import { Button, Spinner } from "react-bootstrap";
-import { Link, useParams } from "react-router-dom";
+import { Badge, Button, Card, CardImg, ListGroup, ListGroupItem, Spinner } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRoute, Routes } from "../apiRoutes";
 import { Role } from "../AuthenticationTypes";
 import { useAuthState } from "../AuthProvider";
 import { useAxiosContext } from "../AxiosInstanceProvider";
 import { Genre, UpdateGenreDTO } from "../Models/GenreModels";
+import { Series } from "../Models/SeriesModels";
 import './CSS/GenreList.css';
+import './CSS/Series.css';
+import placeholderImage from '../Images/placeholder_img.jpg';
+import { capText } from "../Utils";
 
 type GenreViewParams = {
     genreId: string
@@ -74,15 +78,15 @@ function GenreBasicView({ genre }: GenreProps) {
                 {genre.description}
             </div>
             <hr className="hr" />
-            <h2>Series in this genre:</h2>
-            {genre.seriesLinks && genre.seriesLinks.map((series, index) => {
-                return (
-                    <div key={index}>
-                        <Link to={series} />
-                    </div>
-                );
-            })}
-            {!genre?.seriesLinks && <p className="text-center fw-light">No series in this genre</p>}
+            <h2>Series:</h2>
+            <div className="card-grid">
+                {genre.series.map((series, index) => {
+                    return (
+                        <SeriesItem key={index} fetchRoute={series} />
+                    );
+                })}
+                {genre.series.length == 0 && <p className="text-center fw-light">No series in this genre</p>}
+            </div>
         </div>    
     );
 }
@@ -121,17 +125,109 @@ function GenreAdminView({ genre }: GenreProps) {
             <textarea className="form-control jumbotron mt-3" name="description" id="description" value={description} onChange={e => setDescription(e.target.value)} />
             <Button variant="success" onClick={e => handleSave()}>Save Changes</Button>
             <hr className="hr" />
-            <h2>Series in this genre:</h2>
-            {genre.seriesLinks && genre.seriesLinks.map((series, index) => {
-                return (
-                    <div key={index}>
-                        <Link to={series} />
-                    </div>
-                );
-            })}
-            {!genre?.seriesLinks && <p className="text-center fw-light">No series in this genre</p>}
+            <h2>Series:</h2>
+            <div className="card-grid">
+                {genre.series.map((series, index) => {
+                    return (
+                        <SeriesItem key={index} fetchRoute={series} />
+                    );
+                })}
+                {genre.series.length == 0 && <p className="text-center fw-light">No series in this genre</p>}
+            </div>
         </div>
     );
 }
 
+type SeriesItemProps = {
+    fetchRoute: string
+}
+
+function SeriesItem({ fetchRoute }: SeriesItemProps) {
+    const authAxios = useAxiosContext();
+
+    const [series, setSeries] = useState<Series | null>(null);
+
+    useEffect(() => {
+
+        const fetchSeries = async () => {
+
+            const route = `/api${fetchRoute}`;
+
+            try {
+
+                const response = await authAxios.get<Series>(route);
+
+                if (response.status !== 200) {
+                    throw Error('Could not fetch series');
+                }
+
+                setSeries(response.data);
+
+            } catch (e) {
+                console.error(e);
+
+                return Promise.reject(e);
+            }
+
+        };
+
+        fetchSeries();
+
+    }, []);
+
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+        console.log('Replaced broken image');
+        e.currentTarget.src = placeholderImage;
+    };
+
+    const cardDescription = series?.description
+        ? capText(series.description, 100)
+        : undefined;
+
+    const directorBadge = <Badge className="card-badge" key={'start'} bg="primary">Directors</Badge>
+    const directors = series != null && series.directors.length != 0
+        ? series.directors.map((director, idx) => {
+            return (<Badge className="card-badge" key={idx} bg="secondary">{director}</Badge>);
+        })
+        : [<Badge className="card-badge" key={'none'} bg="warning">No known directors</Badge>];
+    const cardDirectors = [directorBadge, ...directors];
+
+    const castBadge = <Badge className="card-badge" key={'start'} bg="primary">Cast</Badge>
+    const starringCast = series != null && series.starringCast.length != 0
+        ? series.starringCast.map((cast, idx) => {
+            return (<Badge className="card-badge" key={idx} bg="secondary">{cast}</Badge>);
+        })
+        : [<Badge className="card-badge" key={'none'} bg="warning">No known cast</Badge>];
+    const cardCast = [castBadge, ...starringCast];
+
+    const body = series === null
+        ? <Spinner animation="border" />
+        :
+        <Card className="card-item" bg="dark" text="white">
+            <Card.Img className="capped-img" variant="top" src={series.coverImagePath
+                ? series.coverImagePath
+                : placeholderImage
+            } onError={e => handleImageError(e)} />
+            <Card.Body>
+                <div style={{ marginBottom: '1em' }}>
+                    <Card.Title>{series.name}</Card.Title>
+                    <Card.Text>
+                        {cardDescription}
+                    </Card.Text>
+                </div>
+                <ListGroup className="card-badges">
+                    <ListGroupItem className="bg-dark">{cardDirectors}</ListGroupItem>
+                    <ListGroupItem className="bg-dark">{cardCast}</ListGroupItem>
+                </ListGroup>
+            </Card.Body>
+        </Card>
+
+    return (
+        <div className="series-item">
+            <Link to={fetchRoute}>
+                {body}
+            </Link>
+        </div>
+    );
+}
 export default GenreView;
