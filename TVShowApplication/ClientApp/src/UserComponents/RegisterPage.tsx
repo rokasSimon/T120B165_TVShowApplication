@@ -21,12 +21,12 @@ function RegisterPage(props: any) {
     };
 
     let responseMessage = undefined;
-    if (successRegistering != null && successRegistering) {
+    if (successRegistering != null && successRegistering == true) {
         responseMessage =
             <div className="jumbotron m-2">
                 <p className="text-success">Registration was a success! Try logging in.</p>
             </div>;
-    } else if (successRegistering != null && !successRegistering) {
+    } else if (successRegistering != null && successRegistering == false) {
         responseMessage =
             <div className="jumbotron m-2">
                 <p className="text-danger">Failed registration! Try again.</p>
@@ -51,9 +51,7 @@ function RegisterPage(props: any) {
                 </div>
                 <input type="submit" className="btn btn-primary" />
             </form>
-            {responseMessage != undefined &&
-                responseMessage
-            }
+            {responseMessage}
         </Container>
     );
 }

@@ -138,7 +138,7 @@ function UpdateSeriesPage(props: any) {
         body = <Container>
             <Row lg={4}>
                 <Col lg={4}>
-                    <h1 className="text-center m-3">Post Series</h1>
+                    <h1 className="text-center m-3">Update Series</h1>
                     <form className="mw-100">
                         <div className="form-group mb-3">
                             <label htmlFor="name" className="form-label">Name</label>
