@@ -19,5 +19,7 @@
         public const string GetReviewById = "api/genre/{genreId:int}/series/{seriesId:int}/review/{reviewId:int}";
         public const string UpdateReview = "api/genre/{genreId:int}/series/{seriesId:int}/review/{reviewId:int}";
         public const string DeleteReview = "api/genre/{genreId:int}/series/{seriesId:int}/review/{reviewId:int}";
+
+        public const string GetUser = "api/user/{userId:int}";
     }
 }

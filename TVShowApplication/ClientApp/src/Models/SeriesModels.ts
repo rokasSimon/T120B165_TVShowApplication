@@ -23,8 +23,8 @@ type CreateSeriesDTO = {
 }
 
 type UpdateSeriesDTO = {
-    name: string,
-    description: string,
+    coverImagePath: string | null,
+    description: string | null,
     directors: string[],
     starringCast: string[]
 }

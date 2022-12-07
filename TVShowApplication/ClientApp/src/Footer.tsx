@@ -24,9 +24,6 @@ function Footer(props: any) {
                         <p>
                             <Link className="link-secondary" to={'/genre'}>Genres</Link>
                         </p>
-                        <p>
-                            <Link className="link-secondary" to={'/series'}>Series</Link>
-                        </p>
                     </div>
                 </div>
             </Container>

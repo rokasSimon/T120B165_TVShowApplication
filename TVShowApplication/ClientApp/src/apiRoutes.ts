@@ -18,8 +18,10 @@ const Routes = {
     GetReviews: BASE_API_URI + "/genre/{0}/series/{1}/review",
     CreateReview: BASE_API_URI + "/genre/{0}/series/{1}/review",
     GetReview: BASE_API_URI + "/genre/{0}/series/{1}/review/{2}",
-    UpdateReview: BASE_API_URI + "/genre/{0}/series/{1}/review/{3}",
+    UpdateReview: BASE_API_URI + "/genre/{0}/series/{1}/review/{2}",
     DeleteReview: BASE_API_URI + "/genre/{0}/series/{1}/review/{3}",
+
+    GetUser: BASE_API_URI + "/user/{0}",
 
     SignUp: BASE_API_URI + "/user",
     GetToken: BASE_API_URI + "/user/token",

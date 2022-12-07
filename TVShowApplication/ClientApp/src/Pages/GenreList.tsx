@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from "react";
-import { Button, Modal, Spinner } from "react-bootstrap";
-import { PlusSquareFill } from "react-bootstrap-icons";
+import { Button, Col, Modal, Row, Spinner } from "react-bootstrap";
+import { PlusSquare, PlusSquareFill } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import { Routes } from "../apiRoutes";
 import { Role } from "../AuthenticationTypes";
@@ -83,7 +83,7 @@ function GenreList(props: any) {
         });
 
     return (
-        <div>
+        <Col>
             <Modal className="text-light" backdrop={true} show={isCreating} onHide={handleClose}>
                 <Modal.Header className="bg-dark">
                     <Modal.Title>Create new genre</Modal.Title>
@@ -109,19 +109,27 @@ function GenreList(props: any) {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <div className="genre-list-page">
-                <h1>Available genres</h1>
-                {auth.user && auth.user.Role == Role.Admin &&
-                    <div className="create-button" onClick={handleShow}>
-                        <PlusSquareFill size={32} />
+            <Row>
+                <div className="d-flex flex-row">
+                    <div className="me-auto">
+                        <h1>Available genres</h1>
                     </div>
-                }
+                    {auth.user && auth.user.Role == Role.Admin &&
+                        <div className="mt-auto mb-auto" onClick={handleShow}>
+                            <a href="#" className="text-light">
+                                <PlusSquare size={32} />
+                            </a>
+                        </div>
+                    }
+                </div>
+            </Row>
+            <Row>
                 <hr className="hr" />
                 <div className="genre-list">
                     {body}
                 </div>
-            </div>
-        </div>
+            </Row>
+        </Col>
     );
 }
 

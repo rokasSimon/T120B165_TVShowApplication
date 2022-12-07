@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from "react";
-import { Badge, Button, Card, CardImg, ListGroup, ListGroupItem, Spinner } from "react-bootstrap";
+import { Badge, Button, Card, CardImg, Col, ListGroup, ListGroupItem, Modal, Row, Spinner } from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatRoute, Routes } from "../apiRoutes";
 import { Role } from "../AuthenticationTypes";
@@ -11,6 +11,7 @@ import './CSS/GenreList.css';
 import './CSS/Series.css';
 import placeholderImage from '../Images/placeholder_img.jpg';
 import { capText } from "../Utils";
+import { Trash } from "react-bootstrap-icons";
 
 type GenreViewParams = {
     genreId: string
@@ -72,28 +73,71 @@ type GenreProps = {
 function GenreBasicView({ genre }: GenreProps) {
     return (
         <div>
-            <h1>{genre.name}</h1>
-            <hr className="hr" />
-            <div className="jumbotron mt-3">
-                {genre.description}
-            </div>
-            <hr className="hr" />
-            <h2>Series:</h2>
-            <div className="card-grid">
-                {genre.series.map((series, index) => {
-                    return (
-                        <SeriesItem key={index} fetchRoute={series} />
-                    );
-                })}
-                {genre.series.length == 0 && <p className="text-center fw-light">No series in this genre</p>}
-            </div>
+            <Col>
+                <Row>
+                    <div className="d-flex flex-row">
+                        <div className="me-auto">
+                            <h1>{genre.name}</h1>
+                        </div>
+                    </div>
+                    <hr className="hr" />
+                </Row>
+                <Row>
+                    <div className="jumbotron mt-3">
+                        {genre.description}
+                    </div>
+                    <hr className="hr" />
+                </Row>
+                <SeriesList genre={genre} />
+            </Col>
+            
+            {/*<h1>{genre.name}</h1>*/}
+            {/*<hr className="hr" />*/}
+            {/*<div className="jumbotron mt-3">*/}
+            {/*    {genre.description}*/}
+            {/*</div>*/}
+            {/*<hr className="hr" />*/}
+            {/*<h2>Series</h2>*/}
+            {/*<div className="card-grid">*/}
+            {/*    {genre.series.map((series, index) => {*/}
+            {/*        return (*/}
+            {/*            <SeriesItem key={index} fetchRoute={series} />*/}
+            {/*        );*/}
+            {/*    })}*/}
+            {/*    {genre.series.length == 0 && <p className="text-center fw-light">No series in this genre</p>}*/}
+            {/*</div>*/}
         </div>    
     );
 }
 
 function GenreAdminView({ genre }: GenreProps) {
 
+    const auth = useAuthState();
     const authAxios = useAxiosContext();
+    const params = useParams<GenreViewParams>();
+    const navigate = useNavigate();
+
+    const [isDeleting, setDeleting] = useState<boolean>(false);
+    const handleShow = () => setDeleting(true);
+    const handleClose = () => setDeleting(false);
+    const handleDelete = async () => {
+
+        if (genre.series.length != 0) return;
+
+        const route = formatRoute(Routes.DeleteGenre, params.genreId!);
+
+        try {
+
+            const response = await authAxios.delete(route);
+
+            navigate(`/genre`);
+
+        } catch (e) {
+            console.error(e);
+
+            return Promise.reject(e);
+        }
+    }
 
     const [description, setDescription] = useState<string>(genre.description);
     const handleSave = async () => {
@@ -120,12 +164,57 @@ function GenreAdminView({ genre }: GenreProps) {
 
     return (
         <div>
-            <h1>{genre.name}</h1>
-            <hr className="hr" />
-            <textarea className="form-control jumbotron mt-3" name="description" id="description" value={description} onChange={e => setDescription(e.target.value)} />
-            <Button variant="success" onClick={e => handleSave()}>Save Changes</Button>
-            <hr className="hr" />
-            <h2>Series:</h2>
+            <Col>
+                <Modal className="text-light" backdrop={true} show={isDeleting} onHide={handleClose}>
+                    <Modal.Header className="bg-dark">
+                        <Modal.Title>Deleting {genre.name}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body className="bg-dark">
+                        <p>Are you sure you want to delete this genre?</p>
+                    </Modal.Body>
+                    <Modal.Footer className="bg-dark">
+                        <Button variant="secondary" onClick={handleClose}>
+                            Cancel
+                        </Button>
+                        <Button variant="danger" onClick={e => handleDelete()}>
+                            Delete
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Row>
+                    <div className="d-flex flex-row">
+                        <div className="me-auto">
+                            <h1>{genre.name}</h1>
+                        </div>
+                        {auth.user && auth.user.Role == Role.Admin && genre.series.length == 0 &&
+                            <div className="mt-auto mb-auto" onClick={handleShow}>
+                                <a href="#" className="text-light">
+                                    <Trash size={32} />
+                                </a>
+                            </div>
+                        }
+                    </div>
+                    <hr className="hr" />
+                </Row>
+                <Row>
+                    <textarea className="form-control jumbotron mb-3" name="description" id="description" value={description} onChange={e => setDescription(e.target.value)} />
+                </Row>
+                <Row xl={4}>
+                    <Button variant="success" className="mb-3" onClick={e => handleSave()}>Save Changes</Button>
+                </Row>
+                <Row>
+                    <hr className="hr" />
+                </Row>
+                <SeriesList genre={genre} />
+            </Col>
+        </div>
+    );
+}
+
+function SeriesList({ genre }: GenreProps) {
+    return (
+        <Row>
+            <h4>Series</h4>
             <div className="card-grid">
                 {genre.series.map((series, index) => {
                     return (
@@ -134,7 +223,7 @@ function GenreAdminView({ genre }: GenreProps) {
                 })}
                 {genre.series.length == 0 && <p className="text-center fw-light">No series in this genre</p>}
             </div>
-        </div>
+        </Row>
     );
 }
 

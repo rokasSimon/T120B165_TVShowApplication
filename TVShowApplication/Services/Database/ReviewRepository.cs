@@ -75,6 +75,8 @@ namespace TVShowApplication.Services.Database
             if (!series.Genres.Any(g => g.Id == genreId)) throw new ResourceNotFoundException($"There is no such genre: '{genreId}'.");
             review.ReviewedSeries = series;
 
+            review.PostDate = DateTime.Now;
+
             var createdReview = await _context.Reviews.AddAsync(review);
             var successfullyCreated = await SaveAsync();
 

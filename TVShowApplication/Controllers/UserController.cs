@@ -1,25 +1,42 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TVShowApplication.Data;
 using TVShowApplication.Data.DTO.User;
+using TVShowApplication.Models;
 using TVShowApplication.Services.Interfaces;
 
 namespace TVShowApplication.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
+        private readonly IUserRepository _userRepository;
         private readonly IUserManager _userManager;
-        private ILogger<UserController> _logger;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserManager userManager, ILogger<UserController> logger)
+        public UserController(IUserRepository userRepository, IUserManager userManager, IMapper mapper)
         {
+            _userRepository = userRepository;
             _userManager = userManager;
-            _logger = logger;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route(Routes.GetUser)]
+        public async Task<IActionResult> GetUser(int userId)
+        {
+            var user = await _userRepository.GetUserAsync<User>(userId);
+
+            if (user == null) return NotFound();
+
+            return Ok(_mapper.Map<GetUserDTO>(user));
         }
 
         [HttpPost]
         [AllowAnonymous]
+        [Route("api/user")]
         public async Task<IActionResult> SignUp(SignUpRequest signUpRequest)
         {
             var success = await _userManager.CreateUser(signUpRequest);
@@ -31,20 +48,19 @@ namespace TVShowApplication.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("token")]
+        [Route("api/user/token")]
         public async Task<IActionResult> GetToken(SignInRequest signInRequest)
         {
             var tokens = await _userManager.GetTokenForUser(signInRequest);
 
             if (tokens == null) return Unauthorized();
-            _logger.LogDebug("Sending tokens: access = {Token}; refresh = {Refresh}", tokens.AccessToken, tokens.RefreshToken);
 
             return Ok(tokens);
         }
 
         [HttpPost]
         [AllowAnonymous]
-        [Route("token/refresh")]
+        [Route("api/user/token/refresh")]
         public async Task<IActionResult> RefreshToken(RefreshTokenRequest refreshRequest)
         {
             var authentication = await _userManager.RefreshToken(refreshRequest);
@@ -56,7 +72,7 @@ namespace TVShowApplication.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route("token/revoke")]
+        [Route("api/user/token/revoke")]
         public async Task<IActionResult> RevokeToken()
         {
             await _userManager.Revoke();

@@ -18,7 +18,10 @@ namespace TVShowApplication.Services.Database
         {
             var set = _context.Set<T>();
 
-            var user = await set.SingleOrDefaultAsync(x => x.Id == id);
+            var user = await set
+                .Include(u => u.Reviews)
+                    .ThenInclude(r => r.ReviewedSeries.Genres)
+                .SingleOrDefaultAsync(x => x.Id == id);
 
             return user;
         }

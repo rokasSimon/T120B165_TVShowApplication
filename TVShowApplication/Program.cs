@@ -81,7 +81,7 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.AddSpaStaticFiles(spa =>
 {
-    spa.RootPath = "ClientApp";
+    spa.RootPath = "ClientApp/build";
 });
 
 var app = builder.Build();
@@ -102,25 +102,13 @@ app.MapWhen(req => !req.Request.Path.Value.StartsWith("/api"), appBuilder =>
 {
     appBuilder.UseSpa(spa =>
     {
-        spa.Options.SourcePath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp");
+        spa.Options.SourcePath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp/build");
 
         if (builder.Environment.IsDevelopment())
         {
             spa.UseReactDevelopmentServer("start");
         }
     });
-});
-
-app.Use(async (req, next) =>
-{
-    var headers = req.Request.Headers.ToList();
-
-    foreach (var item in headers)
-    {
-        Console.WriteLine($"{item.Key}: {item.Value}");
-    }
-
-    await next();
 });
 
 app.UseAuthentication();

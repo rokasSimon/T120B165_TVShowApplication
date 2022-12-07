@@ -14,6 +14,7 @@ import { AxiosInstanceProvider } from './AxiosInstanceProvider';
 import GenreView from './Pages/GenreView';
 import CreateSeriesPage from './Pages/CreateSeriesPage';
 import SeriesView from './Pages/SeriesView';
+import UpdateSeriesPage from './Pages/UpdateSeriesPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
             {
                 path: '/genre/:genreId/series/:seriesId',
                 element: <SeriesView />
+            },
+            {
+                path: '/genre/:genreId/series/:seriesId/edit',
+                element: <UpdateSeriesPage />
             }
         ],
     }

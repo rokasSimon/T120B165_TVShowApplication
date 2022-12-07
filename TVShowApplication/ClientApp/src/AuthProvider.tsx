@@ -62,8 +62,6 @@ async function login(dispatch: AuthDispatch, request: LoginRequest) {
             return;
         }
 
-        console.log(getTokenResponse.data.accessToken);
-
         const accessTokenPayload = parseJwt(getTokenResponse.data.accessToken);
         const userData: User = {
             Id: accessTokenPayload.Id,
