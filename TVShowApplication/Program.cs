@@ -79,43 +79,73 @@ builder.Services.AddSwaggerGen(opt =>
     });
 });
 
-builder.Services.AddSpaStaticFiles(spa =>
-{
-    spa.RootPath = "ClientApp/build";
-});
-
 var app = builder.Build();
 
 app.UseProblemDetails();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//// Configure the HTTP request pipeline.
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.UseSpaStaticFiles();
+app.UseStaticFiles();
+app.UseRouting();
 
-app.MapWhen(req => !req.Request.Path.Value.StartsWith("/api"), appBuilder =>
+app.UseWhen(c => !c.Request.Path.StartsWithSegments(new PathString("/api")), appBuilder =>
 {
     appBuilder.UseSpa(spa =>
     {
-        spa.Options.SourcePath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp/build");
+        spa.Options.SourcePath = "ClientApp\\build";
 
-        if (builder.Environment.IsDevelopment())
+        if (app.Environment.IsDevelopment())
         {
             spa.UseReactDevelopmentServer("start");
         }
     });
 });
 
+//app.MapWhen(req => !req.Request.Path.Value.StartsWith("/api"), appBuilder =>
+//{
+//    appBuilder.UseSpa(spa =>
+//    {
+//        spa.Options.SourcePath = Path.Combine(builder.Environment.ContentRootPath, "ClientApp/build");
+
+//        if (builder.Environment.IsDevelopment())
+//        {
+//            spa.UseReactDevelopmentServer("start");
+//        }
+//    });
+//});
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseMiddleware<UserDataMiddleware>();
 
-app.MapControllers();
+//app.MapControllers();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+
+    endpoints.MapFallbackToFile("/index.html");
+});
+
+//app.UseSpa(configuration =>
+//{
+//    if (builder.Environment.IsDevelopment())
+//    {
+//        configuration.UseReactDevelopmentServer("start");
+//    }
+
+//    configuration.Options.DefaultPage = PathString.FromUriComponent("/");
+//    configuration.Options.SourcePath = "ClientApp/build";
+//});
 
 app.Run();

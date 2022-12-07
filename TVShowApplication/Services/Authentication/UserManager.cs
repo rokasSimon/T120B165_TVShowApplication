@@ -39,7 +39,7 @@ namespace TVShowApplication.Services.Authentication
         {
             var user = await _userRepository.FindUserAsync(request.Email);
 
-            if (user != null) return false;
+            if (user != null) throw new ArgumentException("User already taken");
 
             var salt = _passwordHasher.CreateSalt();
             var passwordHash = _passwordHasher.HashPassword(request.Password, salt);
@@ -51,7 +51,7 @@ namespace TVShowApplication.Services.Authentication
                 AdminRoleSecret => new Administrator { Email = request.Email, HashedPassword = passwordHash, Salt = salt, },
                 _ => new User { Email = request.Email, HashedPassword = passwordHash, Salt = salt },
             };
-            if (newUser == null) return false;
+            if (newUser == null) throw new InvalidOperationException("Failed to construct user");
 
             var insertedUser = await _userRepository.InsertUserAsync(newUser);
 

@@ -40,14 +40,14 @@ namespace TVShowApplication.Services.Database
             var set = _context.Set<T>();
 
             var createdUser = await set.AddAsync(user);
-            var successfullyCreated = await SaveAsync();
+            var _ = await SaveAsync();
 
-            if (successfullyCreated)
+            if (createdUser == null)
             {
-                return createdUser.Entity;
+                return null;
             }
 
-            return null;
+            return createdUser.Entity;
         }
 
         public async Task<bool> UpdateUserAsync<T>(int id, T user) where T : User
